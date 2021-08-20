@@ -11,7 +11,9 @@
         "laravel/framework": "^8.54",
         "laravel/sanctum": "^2.11",
         "laravel/tinker": "^2.5",
-        "laravel/ui": "^3.3"
+        "laravel/ui": "^3.3",
+        "laravelrus/sleepingowl": "^8.44",
+        "longman/telegram-bot": "^0.74.0"
     },
     "require-dev": {
         "facade/ignition": "^2.5",
