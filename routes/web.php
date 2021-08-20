@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\BotController;
 use Illuminate\Support\Facades\Route;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -15,6 +17,12 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
+});
+
+Route::group(['prefix' => 'tg'], function () {
+    Route::get('set', [BotController::class, 'set'])->middleware('auth')->name('tg.set');
+    Route::get('webhook', [BotController::class, 'webhook'])->name('tg.webhook');
+    Route::get('updates', [BotController::class, 'updates'])->name('tg.updates');
 });
 
 Auth::routes();
