@@ -15,6 +15,12 @@ class UsersTableSeeder extends Seeder
      */
     public function run()
     {
+        $users = User::all();
+
+        if (count($users) > 0) {
+            return;
+        }
+
         $user = User::create([
             'name' => 'Admin',
             'email' => 'admin@example.com',

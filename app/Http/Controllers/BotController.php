@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use App\Models\Product;
 use App\Models\LastConversation;
+use App\Models\UsersMessage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Telegram\Bot\Api;
@@ -68,12 +70,26 @@ class BotController extends Controller
         return $u;
     }
 
+    private function saveUpdate($update) {
+        UsersMessage::create([
+            'user_id' => $update['message']['from']['id'],
+            'update_id' => $update['update_id'],
+            'message' => serialize($update),
+        ]);
+    }
+
     private function handleUpdate($update) {
         if (isset($update['message'])) {
             $chat_id = $update['message']['from']['id'];
             $message = $update['message']['text'];
             $this->handleMessage($message, $chat_id);
+            $this->saveUpdate($update);
         }
+
+        if (isset($update['callback_query'])) {
+            $this->handleCallback($update);
+        }
+
         $last = LastConversation::first();
         if (!$last) {
             $last = LastConversation::create([
@@ -82,6 +98,39 @@ class BotController extends Controller
         } else {
             $last->last_conversation = $update['update_id'];
             $last->save();
+        }
+    }
+
+    private function handleCallback($callback) {
+        $chat_id = $callback['callback_query']['from']['id'];
+        if (strpos($callback['callback_query']['data'], 'category') !== false) {
+            $category_id = (int) str_replace('category:', '', $callback['callback_query']['data']);
+            $category = Category::find($category_id);
+            $products = Product::where('category_id', $category_id)->get();
+            $msg = [
+                'chat_id' => $chat_id,
+                'text' => '',
+            ];
+
+            if (count($products) > 0) {
+                $msg['text'] = "Категория: {$category->name}";
+                $keyboard = [];
+
+                foreach ($products as $product) {
+                    $keyboard[] = [Keyboard::inlineButton([
+                        'text' => "$product->price р. - $product->name",
+                        'callback_data' => "product:{$product->id}",
+                    ])];
+                }
+
+                $msg['reply_markup'] = Keyboard::make([
+                    'inline_keyboard' => $keyboard,
+                ]);
+            } else {
+                $msg['text'] = 'В категории нет товаров';
+            }
+            \Log::info($msg);
+            $reponse = $this->telegram->sendMessage($msg);
         }
     }
 

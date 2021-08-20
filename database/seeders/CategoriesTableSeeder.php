@@ -14,6 +14,12 @@ class CategoriesTableSeeder extends Seeder
      */
     public function run()
     {
+        $categories = Category::all();
+
+        if (count($category) > 0) {
+            return;
+        }
+
         $data = [
             'Виски',
             "Водка",
