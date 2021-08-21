@@ -58,10 +58,16 @@ class TestBot extends Command
     }
 
     private function testCommand() {
-        $action = 'category';
+        $action = 'order_create';
+
         $data = [
-            'category_id' => 1,
+            'cart' => serialize([
+                1 => 4,
+            ]),
+            'name' => 'Test',
+            'phone' => '+711111111111',
         ];
+
         Actions::handle($this->telegram, $this->chat_id, $action, $data);
     }
 

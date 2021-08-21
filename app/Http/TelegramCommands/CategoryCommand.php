@@ -48,6 +48,6 @@ class CategoryCommand {
             $msg['text'] = 'В категории нет товаров';
         }
         $reponse = $this->telegram->sendMessage($msg);
-        return 0;
+        return;
     }
 }

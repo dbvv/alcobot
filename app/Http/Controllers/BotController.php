@@ -84,16 +84,13 @@ class BotController extends Controller
 
     private function handleCallback($callback) {
         $chat_id = $callback['callback_query']['from']['id'];
-        $msg = [
-            'chat_id' => $chat_id,
-            'text' => '',
-        ];
         if (strpos($callback['callback_query']['data'], 'category') !== false) {
             $category_id = (int) str_replace('category:', '', $callback['callback_query']['data']);
+            Actions::handle($this->telegram, $chat_id, 'category', compact('category_id'));
 
         } elseif (strpos($callback['callback_query']['data'], 'product') !== false) {
             $product_id = (int) str_replace('product:', '', $callback['callback_query']['data']);
-
+            Actions::handle($this->telegram, $chat_id, 'product', compact('product_id'));
         }
         \Log::info($msg);
     }

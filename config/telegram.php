@@ -24,5 +24,7 @@ return [
         'default' => App\Http\TelegramCommands\DefaultCommand::class,
         'product' => App\Http\TelegramCommands\ProductCommand::class,
         'category' => App\Http\TelegramCommands\CategoryCommand::class,
+        'cart' => App\Http\TelegramCommands\CartCommand::class,
+        'order_create' => App\Http\TelegramCommands\CheckoutCommand::class,
     ],
 ];
