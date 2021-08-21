@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Telegram\Bot\Api;
 use Telegram\Bot\Keyboard\Keyboard;
+use Telegram\Bot\FileUpload\InputFile;
 
 class BotController extends Controller
 {
@@ -103,14 +104,14 @@ class BotController extends Controller
 
     private function handleCallback($callback) {
         $chat_id = $callback['callback_query']['from']['id'];
+        $msg = [
+            'chat_id' => $chat_id,
+            'text' => '',
+        ];
         if (strpos($callback['callback_query']['data'], 'category') !== false) {
             $category_id = (int) str_replace('category:', '', $callback['callback_query']['data']);
             $category = Category::find($category_id);
             $products = Product::where('category_id', $category_id)->get();
-            $msg = [
-                'chat_id' => $chat_id,
-                'text' => '',
-            ];
 
             if (count($products) > 0) {
                 $msg['text'] = "Категория: {$category->name}";
@@ -129,9 +130,63 @@ class BotController extends Controller
             } else {
                 $msg['text'] = 'В категории нет товаров';
             }
-            \Log::info($msg);
             $reponse = $this->telegram->sendMessage($msg);
+        } elseif (strpos($callback['callback_query']['data'], 'product') !== false) {
+            $product_id = (int) str_replace('product:', '', $callback['callback_query']['data']);
+            $product = Product::where('id', $product_id)->with('category')->first();
+
+            $caption = " Просмотр товара в категории: {$product->category->name} \n\n*{$product->name}* \n\n*Цена:* {$product->price} руб. ";
+            $msg['parse_mode'] = 'markdown';
+
+            $keyboard = [
+                [Keyboard::inlineButton([
+                    'text' => "{$product->price} * 1 = {$product->price}", // TODO update after cart
+                    'callback_data' => "cart:{$product->id}"])
+                ],
+                [
+                    Keyboard::inlineButton([
+                        'text' => '➕',
+                        'callback_data' => "add_to_cart:{$product->id}",
+                    ]),
+                    Keyboard::inlineButton([
+                        'text' => '➖',
+                        'callback_data' => "remove_from_cart:{$product->id}",
+                    ])
+                ],
+                [
+                    Keyboard::inlineButton([
+                        'text' => "Добавить в корзину",
+                        'callback_data' => "add_to_cart:{$product->id}",
+                    ]),
+                ],
+                [
+                    Keyboard::inlineButton([
+                        'text' => 'Добавили? Оформляем заказ?',
+                        'callback_data' => 'order_create',
+                    ]),
+                ],
+                [
+                    Keyboard::inlineButton([
+                        'text' => '... или продолжить покупки?',
+                        'callback_data' => 'catalog',
+                    ]),
+                ],
+            ];
+            $msg['reply_markup'] = Keyboard::make([
+                'inline_keyboard' => $keyboard,
+            ]) ;
+
+            if ($product->image) {
+                $msg['caption'] = $caption;
+                $photo = InputFile::create(public_path() . "/$product->image", $product->name);
+                $msg['photo'] = $photo;
+                $response = $this->telegram->sendPhoto($msg);
+            } else {
+                $msg['text'] = $caption;
+                $reponse = $this->telegram->sendMessage($msg);
+            }
         }
+        \Log::info($msg);
     }
 
     public function updates(Request $request) {
