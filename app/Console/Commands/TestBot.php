@@ -2,9 +2,11 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
+use App\Actions;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
+use Illuminate\Console\Command;
+use Telegram\Bot\Api;
 
 class TestBot extends Command
 {
@@ -26,6 +28,10 @@ class TestBot extends Command
      */
     protected $description = 'Command description';
 
+    private $chat_id;
+
+    private $telegram;
+
     /**
      * Create a new command instance.
      *
@@ -36,7 +42,27 @@ class TestBot extends Command
         $this->client = new Client([
             'base_uri' => $this->url,
         ]);
+        $key = config('telegram.api_key');
+        $name = config('telegram.user_name');
+        $this->chat_id = 1050626474;
+
+        if ($key) {
+            try {
+                $this->telegram = new Api($key);
+            } catch (\Exception $e) {
+                dump($e);
+                Log::error($e);
+            }
+        }
         parent::__construct();
+    }
+
+    private function testCommand() {
+        $action = 'category';
+        $data = [
+            'category_id' => 1,
+        ];
+        Actions::handle($this->telegram, $this->chat_id, $action, $data);
     }
 
     /**
@@ -46,8 +72,9 @@ class TestBot extends Command
      */
     public function handle()
     {
-        $response = $this->client->request('GET', 'tg/updates');
-        dump($response);
+        $this->testCommand();
+        //$response = $this->client->request('GET', 'tg/updates');
+        //dump($response);
 
         return 0;
     }

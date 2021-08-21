@@ -14,5 +14,15 @@ return [
         ['Каталог'],
         ['Корзина', "Доставка"],
         ['Онлайн-чат', "Позвонить"],
-    ]
+    ],
+
+    /**
+     * List of commands with hanlders
+     */
+    'commands' => [
+        'catalog' => App\Http\TelegramCommands\CatalogCommand::class,
+        'default' => App\Http\TelegramCommands\DefaultCommand::class,
+        'product' => App\Http\TelegramCommands\ProductCommand::class,
+        'category' => App\Http\TelegramCommands\CategoryCommand::class,
+    ],
 ];
