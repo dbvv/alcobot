@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Actions;
+use App\Models\UsersCart;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
 use Illuminate\Console\Command;
@@ -57,7 +58,7 @@ class TestBot extends Command
         parent::__construct();
     }
 
-    private function testCommand() {
+    private function orderCreate() {
         $action = 'order_create';
 
         $data = [
@@ -66,6 +67,23 @@ class TestBot extends Command
             ]),
             'name' => 'Test',
             'phone' => '+711111111111',
+        ];
+
+        Actions::handle($this->telegram, $this->chat_id, $action, $data);
+    }
+
+    private function testCommand() {
+        $cart = UsersCart::where('telegram_user_id', $this->chat_id)->first();
+        if (!$cart) {
+            $cart = UsersCart::create([
+                'telegram_user_id' => $this->chat_id,
+                'cart' => serialize([1 => 2]),
+            ]);
+        }
+        $action = 'cart';
+
+        $data = [
+            'action' => 'edit_cart',
         ];
 
         Actions::handle($this->telegram, $this->chat_id, $action, $data);
@@ -84,4 +102,5 @@ class TestBot extends Command
 
         return 0;
     }
+
 }

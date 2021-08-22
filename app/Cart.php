@@ -2,9 +2,32 @@
 
 namespace App;
 
+use App\Models\Product;
 use App\Models\UsersCart;
 
 class Cart {
+    public static function showCart($userID, $forEdit = false) {
+        $cart = UsersCart::where('telegram_user_id', $userID)->first();
+        $cartProducts = [];
+        $cartData = unserialize($cart->cart);
+        if ($cart && count($cartData) > 0) {
+            $txt = "Сейчас в вашей козине:\n\n";
+            $total = 0;
+            foreach ($cartData as $productID => $count) {
+                $product = Product::find($productID);
+                if ($forEdit) {
+                    $cartProducts[$productID] = $product;
+                }
+                $txt .= "$product->name:{$product->price} руб. x $count\n";
+                $total += $product->price;
+            }
+            $txt .= "\nСумма без доставки: $total руб.";
+
+        } else {
+            $txt = "Ваша корзина пуста";
+        }
+        return compact('cart', 'txt', 'cartProducts');
+    }
     public static function addToCart($user_id, $product_id) {
         $cart = UsersCart::where('telegram_user_id', $user_id)->first();
 

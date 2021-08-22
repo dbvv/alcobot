@@ -6,7 +6,7 @@
     ** DONE product output
     ** DONE product single actions
     ** TODO adding/removing to cart
-    ** TODO cart output
+    ** DONE cart output
 * TODO функционал оформления заказа
 * TODO отправлять заказ пользователю
 * TODO инфо страницы
