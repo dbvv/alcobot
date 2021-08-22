@@ -87,6 +87,7 @@ class CartCommand {
                     'inline_keyboard' => $keyboard,
                 ]),
             ]);
+            break;
         }
         return 0;
     }

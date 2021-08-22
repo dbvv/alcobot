@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\LastConversation;
@@ -87,12 +88,29 @@ class BotController extends Controller
         if (strpos($callback['callback_query']['data'], 'category') !== false) {
             $category_id = (int) str_replace('category:', '', $callback['callback_query']['data']);
             Actions::handle($this->telegram, $chat_id, 'category', compact('category_id'));
-
         } elseif (strpos($callback['callback_query']['data'], 'product') !== false) {
             $product_id = (int) str_replace('product:', '', $callback['callback_query']['data']);
             Actions::handle($this->telegram, $chat_id, 'product', compact('product_id'));
+        } elseif (strpos($callback['callback_query']['data'], 'cart') !== false) {
+            $callback_query_data = explode(':', $callback['callback_query']['data']);
+
+            $data = [];
+
+            // cart product actions
+            if (count($callback_query_data) === 3) {
+                $data['action'] = $callback_query_data[1];
+                $data['product_id'] = (int) $callback_query_data[2];
+            }
+
+            // show cart
+            if (count($callback_query_data) === 2) {
+                $data['action'] = $callback_query_data[1];
+            }
+
+            Actions::handle($this->telegram, $chat_id, 'cart', $data);
+        } elseif ($callback['callback_query']['data'] === 'catalog') {
+            Actions::handle($this->telegram, $chat_id, 'catalog');
         }
-        \Log::info($msg);
     }
 
     public function updates(Request $request) {
@@ -107,10 +125,9 @@ class BotController extends Controller
     private function handleMessage($message, $chat_id) {
         switch ($message) {
             case 'Каталог':
-                $this->showCatalog($this->telegram);
+                Actions::handle($this->telegram, $chat_id, 'catalog');
                 break;
             default:
-                $this->welcomeMessage($chat_id);
                 break;
         }
     }

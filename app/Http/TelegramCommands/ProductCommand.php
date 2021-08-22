@@ -2,6 +2,7 @@
 
 namespace App\Http\TelegramCommands;
 
+use App\Cart;
 use App\Models\Product;
 use Telegram\Bot\FileUpload\InputFile;
 use Telegram\Bot\Keyboard\Keyboard;
@@ -33,42 +34,62 @@ class ProductCommand {
         ];
         $product = Product::where('id', $product_id)->with('category')->first();
 
-        $caption = " Просмотр товара в категории: {$product->category->name} \n\n*{$product->name}* \n\n*Цена:* {$product->price} руб. ";
-        $msg['parse_mode'] = 'markdown';
+        $cart = Cart::showCart($this->chatID);
 
-        $keyboard = [
-            [Keyboard::inlineButton([
-                'text' => "{$product->price} * 1 = {$product->price}", // TODO update after cart
-                'callback_data' => "cart:{$product->id}"])
-            ],
-            [
-                Keyboard::inlineButton([
-                    'text' => '➕',
-                    'callback_data' => "add_to_cart:{$product->id}",
-                ]),
-                Keyboard::inlineButton([
-                    'text' => '➖',
-                    'callback_data' => "remove_from_cart:{$product->id}",
-                ])
-            ],
-            [
+        $cartData = unserialize($cart['cart']->cart);
+
+        $caption = "Просмотр товара в категории: {$product->category->name} \n\n*{$product->name}* \n\n*Цена:* {$product->price} руб. ";
+        $msg['parse_mode'] = 'markdown';
+        $keyboard = [];
+
+        $productCount = isset($cartData[$product->id]) ? $cartData[$product->id] : 1;
+        $productPrice = isset($cartData[$product->id]) ? $product->price * $cartData[$product->id] : $product->price;
+        $keyboard[] = [Keyboard::inlineButton([
+            'text' => "{$product->price} * $productCount = {$productPrice}",
+            'callback_data' => "art:{$product->id}"])
+        ];
+
+        $cartActionButtons = [
+            Keyboard::inlineButton([
+                'text' => '➕',
+                'callback_data' => "cart:cart_plus:{$product->id}",
+            ]),
+            Keyboard::inlineButton([
+                'text' => '➖',
+                'callback_data' => "cart:cart_minus:{$product->id}",
+            ])
+        ];
+
+        if (isset($cartData[$product->id])) {
+            $cartActionButtons[] = Keyboard::inlineButton([
+                'text' => "Удалить",
+                "callback_data" => "cart:remove_from_cart:{$product->id}",
+            ]);
+        }
+
+        $keyboard[] = $cartActionButtons;
+
+        if (!isset($cartData[$product->id])) {
+            $keyboard[] = [
                 Keyboard::inlineButton([
                     'text' => "Добавить в корзину",
-                    'callback_data' => "add_to_cart:{$product->id}",
+                    'callback_data' => "cart:add_to_cart:{$product->id}",
                 ]),
-            ],
-            [
-                Keyboard::inlineButton([
-                    'text' => 'Добавили? Оформляем заказ?',
-                    'callback_data' => 'order_create',
-                ]),
-            ],
-            [
-                Keyboard::inlineButton([
-                    'text' => '... или продолжить покупки?',
-                    'callback_data' => 'catalog',
-                ]),
-            ],
+            ];
+        }
+
+        $keyboard[] = [
+            Keyboard::inlineButton([
+                'text' => 'Добавили? Оформляем заказ?',
+                'callback_data' => 'order_create',
+            ]),
+        ];
+
+        $keyboard[] = [
+            Keyboard::inlineButton([
+                'text' => '... или продолжить покупки?',
+                'callback_data' => 'catalog',
+            ]),
         ];
         $msg['reply_markup'] = Keyboard::make([
             'inline_keyboard' => $keyboard,
