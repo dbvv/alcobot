@@ -23,7 +23,7 @@ class EmptyCartCommand {
             extract($this->data);
         }
 
-        $this->telegram->message([
+        $this->telegram->sendMessage([
             'chat_id' => $this->chatID,
             'text' => 'Ваша корзина пуста',
         ]);

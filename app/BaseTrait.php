@@ -67,9 +67,9 @@ trait BaseTrait {
         if (isset($update['message']) && isset($update['message']['contact'])) {
             $chat_id = $update['message']['from']['id'];
             $user = Actions::saveContact($update['message']['contact'], $update['message']['from']['id']);
-            $cart = Cart::showCart($user->telegram_uset_id);
+            $cart = Cart::showCart($chat_id);
             $data = [
-                'cart' => $cart->cart,
+                'cart' => $cart['cart']->cart,
                 'name' => $user->first_name,
                 'phone' => $user->phone,
             ];

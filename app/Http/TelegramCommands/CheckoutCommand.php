@@ -2,6 +2,7 @@
 
 namespace App\Http\TelegramCommands;
 
+use App\Actions;
 use App\Cart;
 use App\Models\Product;
 use App\Models\Order;
@@ -49,6 +50,7 @@ class CheckoutCommand {
 
         if (!$user || !$user->phone) {
             Actions::handle($this->telegram, $this->chatID, 'pre_order');
+            return;
         }
 
         $cart_arr = unserialize($cart->cart);
@@ -66,7 +68,7 @@ class CheckoutCommand {
 
         $order = Order::create([
             'telegram_user_id' => $this->chatID,
-            'name' => $user->name,
+            'name' => $user->first_name,
             'phone' => $user->phone,
             'order_info' => $cart,
             'order_total' => $total,
