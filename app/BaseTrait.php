@@ -3,6 +3,7 @@
 namespace App;
 
 use App\Models\LastConversation;
+use App\Models\Page;
 use App\Models\UsersMessage;
 
 trait BaseTrait {
@@ -32,6 +33,18 @@ trait BaseTrait {
                 break;
             case '/start':
                 Actions::handle($this->telegram, $chat_id, 'default');
+                break;
+            case 'Доставка':
+                $page = Page::find(1);
+                Actions::handle($this->telegram, $chat_id, "info", compact('page'));
+                break;
+            case 'Онлайн-чат':
+                $page = Page::find(2);
+                Actions::handle($this->telegram, $chat_id, "info", compact('page'));
+                break;
+            case 'Позвонить':
+                $page = Page::find(3);
+                Actions::handle($this->telegram, $chat_id, "info", compact('page'));
                 break;
             default:
                 Actions::handle($this->telegram, $chat_id, 'default');

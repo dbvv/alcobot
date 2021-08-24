@@ -78,10 +78,11 @@ class ProductCommand {
             ];
         }
 
+        $order_action = 'order_create';
         $keyboard[] = [
             Keyboard::inlineButton([
                 'text' => 'Добавили? Оформляем заказ?',
-                'callback_data' => 'pre_order',
+                'callback_data' => $order_action,
             ]),
         ];
 

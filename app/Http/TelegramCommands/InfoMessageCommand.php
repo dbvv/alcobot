@@ -2,6 +2,8 @@
 
 namespace App\Http\TelegramCommands;
 
+use App\Models\Page;
+
 class InfoMessageCommand {
 
     private $telegram;
@@ -17,9 +19,18 @@ class InfoMessageCommand {
     }
 
     public function handle() {
+        if (!isset($this->data['page'])) {
+            return;
+        }
+
         if (count($this->data) > 0) {
             extract($this->data);
         }
+
+        $this->telegram->sendMessage([
+            'chat_id' => $this->chatID,
+            'text' => $page->content,
+        ]);
         return 0;
     }
 }

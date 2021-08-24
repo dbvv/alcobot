@@ -30,8 +30,19 @@ class CheckoutCommand {
 
         $cart = UsersCart::where('telegram_user_id', $this->chatID)->first();
 
-        if (!$cart || !is_array(unserialize($cart->cart)) || count(unserialize($cart->cart)) === 0) {
+        if (!$cart) {
             Actions::handle($this->telegram, $this->chatID, 'empty_cart');
+            return;
+        }
+
+        if (!is_array(unserialize($cart->cart))) {
+            Actions::handle($this->telegram, $this->chatID, 'empty_cart');
+            return;
+        }
+
+        if (count(unserialize($cart->cart)) === 0) {
+            Actions::handle($this->telegram, $this->chatID, 'empty_cart');
+            return;
         }
 
         $user = TelegramUsers::where('telegram_user_id', $this->chatID)->first();

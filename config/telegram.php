@@ -28,5 +28,6 @@ return [
         'order_create' => App\Http\TelegramCommands\CheckoutCommand::class,
         'pre_order' => App\Http\TelegramCommands\PreOrderCommand::class,
         'product' => App\Http\TelegramCommands\ProductCommand::class,
+        'info' => App\Http\TelegramCommands\InfoMessageCommand::class,
     ],
 ];

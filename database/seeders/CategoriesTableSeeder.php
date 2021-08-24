@@ -16,7 +16,7 @@ class CategoriesTableSeeder extends Seeder
     {
         $categories = Category::all();
 
-        if (count($category) > 0) {
+        if (count($categories) > 0) {
             return;
         }
 

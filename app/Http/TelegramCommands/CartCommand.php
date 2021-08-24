@@ -50,7 +50,7 @@ class CartCommand {
             $telegramUser = TelegramUsers::where('telegram_user_id', $this->chatID)->first();
 
             $order_action = 'order_create';
-            if ($telegramUser == null && !$telegramUser->phone) {
+            if ($telegramUser && !$telegramUser->phone) {
                 $order_action = 'pre_order';
             }
             if (count(unserialize($cart['cart']->cart)) > 0) {

@@ -28,7 +28,8 @@ class PreOrderCommand {
 
         $cart = Cart::showCart($this->chatID);
 
-        if (!$cart) {
+        if (!$cart && count(unserialize($cart->cart)) != 0) {
+            Actions::handle($this->telegram, $this->chatID, 'empty_cart');
             return;
         }
 
