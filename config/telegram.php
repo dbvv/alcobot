@@ -20,11 +20,13 @@ return [
      * List of commands with hanlders
      */
     'commands' => [
-        'catalog' => App\Http\TelegramCommands\CatalogCommand::class,
-        'default' => App\Http\TelegramCommands\DefaultCommand::class,
-        'product' => App\Http\TelegramCommands\ProductCommand::class,
-        'category' => App\Http\TelegramCommands\CategoryCommand::class,
         'cart' => App\Http\TelegramCommands\CartCommand::class,
+        'catalog' => App\Http\TelegramCommands\CatalogCommand::class,
+        'category' => App\Http\TelegramCommands\CategoryCommand::class,
+        'default' => App\Http\TelegramCommands\DefaultCommand::class,
+        'empty_cart' => App\Http\TelegramCommands\EmptyCart::class,
         'order_create' => App\Http\TelegramCommands\CheckoutCommand::class,
+        'pre_order' => App\Http\TelegramCommands\PreOrderCommand::class,
+        'product' => App\Http\TelegramCommands\ProductCommand::class,
     ],
 ];

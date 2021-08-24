@@ -3,6 +3,7 @@
 namespace App\Http\TelegramCommands;
 
 use App\Cart;
+use App\Models\TelegramUsers;
 use Telegram\Bot\Keyboard\Keyboard;
 
 /**
@@ -27,6 +28,10 @@ class CartCommand {
             extract($this->data);
         }
 
+
+        if (!isset($this->data['action'])) {
+            return;
+        }
         switch ($action) {
         case 'add_to_cart':
             Cart::addToCart($this->chatID, $product_id);
@@ -42,23 +47,34 @@ class CartCommand {
             break;
         case 'show_cart':
             $cart = Cart::showCart($this->chatID);
-            $response = $this->telegram->sendMessage([
-                'chat_id' => $this->chatID,
-                'text' => $cart['txt'],
-                'reply_markup' => Keyboard::make([
+            $telegramUser = TelegramUsers::where('telegram_user_id', $this->chatID)->first();
+
+            $order_action = 'order_create';
+            if ($telegramUser == null && !$telegramUser->phone) {
+                $order_action = 'pre_order';
+            }
+            if (count(unserialize($cart['cart']->cart)) > 0) {
+                $keyboard = Keyboard::make([
                     'inline_keyboard' => [
                         [
                             Keyboard::inlineButton([
                                 'text' => 'Редактировать',
-                                'callback_data' => 'edit_cart',
+                                'callback_data' => 'cart:edit_cart',
                             ]),
                             Keyboard::inlineButton([
-                                'text' => 'Офромить заказ',
-                                'callback_data' => 'order_Create',
+                                'text' => 'Оформить заказ',
+                                'callback_data' => $order_action,
                             ]),
                         ],
                     ],
-                ]),
+                ]);
+            } else {
+                $keyboard = null;
+            }
+            $response = $this->telegram->sendMessage([
+                'chat_id' => $this->chatID,
+                'text' => $cart['txt'],
+                'reply_markup' => $keyboard,
             ]);
             break;
         case 'edit_cart':

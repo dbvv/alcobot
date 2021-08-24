@@ -8,6 +8,12 @@ use App\Models\UsersCart;
 class Cart {
     public static function showCart($userID, $forEdit = false) {
         $cart = UsersCart::where('telegram_user_id', $userID)->first();
+        if (!$cart) {
+            $cart = UsersCart::create([
+                'telegram_user_id' => $userID,
+                'cart' => serialize([]),
+            ]);
+        }
         $cartProducts = [];
         $cartData = unserialize($cart->cart);
         if ($cart && count($cartData) > 0) {
@@ -28,6 +34,7 @@ class Cart {
         }
         return compact('cart', 'txt', 'cartProducts');
     }
+
     public static function addToCart($user_id, $product_id) {
         $cart = UsersCart::where('telegram_user_id', $user_id)->first();
 
@@ -36,6 +43,15 @@ class Cart {
                 'telegram_user_id' => $user_id,
                 'cart' => serialize([$product_id => 1]),
             ]);
+        } else {
+            $cartInfo = unserialize($cart->cart);
+            if (isset($cartInfo[$product_id])) {
+                $cartInfo[$product_id] = $cartInfo[$product_id] + 1;
+            } else {
+                $cartInfo[$product_id] = 1;
+            }
+            $cart->cart = serialize($cartInfo);
+            $cart->save();
         }
     }
 
@@ -94,5 +110,9 @@ class Cart {
         }
         $cart->cart = serialize($cartData);
         $cart->save();
+    }
+
+    public static function clearCart($chatID) {
+        UsersCart::where('telegram_user_id', $chatID)->update(['cart' => serialize([])]);
     }
 }

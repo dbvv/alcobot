@@ -2,9 +2,11 @@
 
 namespace App\Http\TelegramCommands;
 
+use App\Cart;
 use App\Models\Product;
 use App\Models\Order;
 use App\Models\UsersCart;
+use App\Models\TelegramUsers;
 
 class CheckoutCommand {
 
@@ -21,11 +23,24 @@ class CheckoutCommand {
     }
 
     public function handle() {
+        \Log::info('Creating order');
         if (count($this->data) > 0) {
             extract($this->data);
         }
 
-        $cart_arr = unserialize($cart);
+        $cart = UsersCart::where('telegram_user_id', $this->chatID)->first();
+
+        if (!$cart || !is_array(unserialize($cart->cart)) || count(unserialize($cart->cart)) === 0) {
+            Actions::handle($this->telegram, $this->chatID, 'empty_cart');
+        }
+
+        $user = TelegramUsers::where('telegram_user_id', $this->chatID)->first();
+
+        if (!$user || !$user->phone) {
+            Actions::handle($this->telegram, $this->chatID, 'pre_order');
+        }
+
+        $cart_arr = unserialize($cart->cart);
 
         $total = 0;
 
@@ -40,22 +55,32 @@ class CheckoutCommand {
 
         $order = Order::create([
             'telegram_user_id' => $this->chatID,
-            'name' => $name,
-            'phone' => $phone,
+            'name' => $user->name,
+            'phone' => $user->phone,
             'order_info' => $cart,
             'order_total' => $total,
         ]);
 
-        $order_info = "Заказ №{$order->id}\n Имя: $name\n Телефон: $phone \n $order_products";
+        $order_info = "Заказ №{$order->id}\n Имя: $user->name\n Телефон: $user->phone \n $order_products";
 
         $managers = explode(',', config('telegram.telegram_manager_id'));
-
+        Cart::clearCart($this->chatID);
         foreach ($managers as $manager) {
-            $this->telegram->sendMessage([
-                'chat_id' => $manager,
-                'text' => $order_info,
-            ]);
+            try {
+                $this->telegram->sendMessage([
+                    'chat_id' => $manager,
+                    'text' => $order_info,
+                ]);
+            } catch (\Exception $e) {
+
+            }
         }
+
+        $this->telegram->sendMessage([
+            'chat_id' => $this->chatID,
+            'text' => "Заказ успешно создан!\n\n$order_info",
+        ]);
+
 
         return 0;
     }

@@ -89,6 +89,12 @@ class TestBot extends Command
         Actions::handle($this->telegram, $this->chat_id, $action, $data);
     }
 
+    private function testPreorder() {
+        $action = 'pre_order';
+        $data = [];
+
+        Actions::handle($this->telegram, $this->chat_id, $action, $data);
+    }
     /**
      * Execute the console command.
      *
@@ -96,7 +102,7 @@ class TestBot extends Command
      */
     public function handle()
     {
-        $this->testCommand();
+        $this->testPreorder();
         //$response = $this->client->request('GET', 'tg/updates');
         //dump($response);
 
