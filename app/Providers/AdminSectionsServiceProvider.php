@@ -15,6 +15,7 @@ class AdminSectionsServiceProvider extends ServiceProvider
         \App\Models\Category::class => 'App\Http\Sections\Categories',
         \App\Models\Product::class => 'App\Http\Sections\ProductSection',
         \App\Models\Page::class => 'App\Http\Sections\PagesSection',
+        \App\Models\Order::class => 'App\Http\Sections\OrdersSection',
     ];
 
     /**
