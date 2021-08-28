@@ -18,7 +18,7 @@ class AdminSectionsServiceProvider extends ServiceProvider
         \App\Models\Order::class => 'App\Http\Sections\OrdersSection',
     ];
 
-    /**
+        /**
      * Register sections.
      *
      * @param \SleepingOwl\Admin\Admin $admin
@@ -26,7 +26,6 @@ class AdminSectionsServiceProvider extends ServiceProvider
      */
     public function boot(\SleepingOwl\Admin\Admin $admin)
     {
-    	//
 
         parent::boot($admin);
     }

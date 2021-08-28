@@ -14,7 +14,8 @@
         "laravel/tinker": "^2.5",
         "laravel/ui": "^3.3",
         "laravelrus/sleepingowl": "^8.44",
-        "longman/telegram-bot": "^0.74.0"
+        "longman/telegram-bot": "^0.74.0",
+        "phpoffice/phpspreadsheet": "^1.18"
     },
     "require-dev": {
         "facade/ignition": "^2.5",

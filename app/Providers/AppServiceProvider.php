@@ -6,6 +6,12 @@ use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
+
+    protected $widgets = [
+        \App\Widgets\OrdersTotalWidget::class,
+    ];
+
+
     /**
      * Register any application services.
      *
@@ -23,6 +29,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        $widgetsRegistry = $this->app[\SleepingOwl\Admin\Contracts\Widgets\WidgetsRegistryInterface::class];
+        foreach ($this->widgets as $widget) {
+            $widgetsRegistry->registerWidget($widget);
+        }
         //
     }
 }
