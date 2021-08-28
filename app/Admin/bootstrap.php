@@ -1,5 +1,6 @@
 <?php
 Meta::addJs('order-popup', asset('/js/orders-popup.js'), ['admin-default']);
+Meta::addCss('products', asset('/css/products.css'), []);
 // PackageManager::load('admin-default')
 //    ->css('extend', public_path('packages/sleepingowl/default/css/extend.css'));
 

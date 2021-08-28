@@ -6,4 +6,10 @@ document.addEventListener("DOMContentLoaded", function () {
             html: $this.attr('data-info')
         });
     });
+
+    $(document).on('click', '.edit-custom-image', function (e) {
+        var $this = $(this);
+        var id = $this.data('id');
+        console.log('id', id);
+    });
 });

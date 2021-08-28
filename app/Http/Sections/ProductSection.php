@@ -60,6 +60,7 @@ class ProductSection extends Section implements Initializable
     {
         $columns = [
             AdminColumn::text('id', '#')->setWidth('50px')->setHtmlAttribute('class', 'text-center'),
+            AdminColumn::imageSearchable('image', __('Изображение')),
             AdminColumn::link('name', 'Название', 'created_at')
                 ->setSearchCallback(function($column, $query, $search){
                     return $query
@@ -129,10 +130,8 @@ class ProductSection extends Section implements Initializable
                     ->setVisible(true)
                     ->setReadonly(false)
                 ,
-                AdminFormElement::html('last AdminFormElement without comma')
             ], 'col-xs-12 col-sm-6 col-md-4 col-lg-4')->addColumn([
                 AdminFormElement::text('id', 'ID')->setReadonly(true),
-                AdminFormElement::html('last AdminFormElement without comma')
             ], 'col-xs-12 col-sm-6 col-md-8 col-lg-8'),
         ]);
 

@@ -1,0 +1,19 @@
+.row-customimageexplorer {
+    position: relative;
+    .edit-buttons {
+        position: absolute;
+        top: 0;
+        right: 0;
+        opacity: 0;
+        visibility: hidden;
+        display: flex;
+        flex-direction: row;
+        transition: 0.2s all ease;
+    }
+    &:hover {
+        .edit-buttons {
+            opacity: 1;
+            visibility: visible;
+        }
+    }
+}

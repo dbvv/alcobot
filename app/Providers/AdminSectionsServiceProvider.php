@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\AdminElements\CustomImageExplorer;
 use SleepingOwl\Admin\Providers\AdminSectionsServiceProvider as ServiceProvider;
 
 class AdminSectionsServiceProvider extends ServiceProvider
@@ -26,6 +27,8 @@ class AdminSectionsServiceProvider extends ServiceProvider
      */
     public function boot(\SleepingOwl\Admin\Admin $admin)
     {
+        $columnElementContainer = app('sleeping_owl.table.column');
+        $columnElementContainer->add('imageSearchable', CustomImageExplorer::class);
 
         parent::boot($admin);
     }
