@@ -23,6 +23,7 @@ class CustomImageExplorer extends ParentImageColumn {
             'lazy' => $this->getLazyLoad(),
             'imageWidth' => $this->getImageWidth(),
             'id' => $id,
+            'productName' => $this->getModel()->name,
         ];
     }
 }

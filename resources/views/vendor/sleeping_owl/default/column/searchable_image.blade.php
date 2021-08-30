@@ -1,6 +1,6 @@
 <div {!! $attributes !!} data-id="{{ $id }}">
     <div class="edit-buttons">
-        <button data-id="{{ $id }}" class="btn btn-xs btn-success edit-custom-image"><i class="fa fa-edit"></i></button>
+        <button data-name="{{ $productName }}" data-id="{{ $id }}" class="btn btn-xs btn-success edit-custom-image"><i class="fa fa-edit"></i></button>
     </div>
 	@if ($visibled)
 		@if (!empty($value))

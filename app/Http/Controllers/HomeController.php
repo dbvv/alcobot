@@ -5,8 +5,10 @@ namespace App\Http\Controllers;
 use AdminSection;
 use Illuminate\Http\Request;
 use App\Models\Order;
+use App\Models\Product;
 use App\Models\TelegramUsers;
 use App\ImportTrait;
+use GuzzleHttp\Client;
 use Log;
 use Session;
 
@@ -51,6 +53,30 @@ class HomeController extends Controller
         $this->importProducts(storage_path("app/public/$filePath") );
         Session::put("info_message", 'Импорт прошел успешно!');
         return back()->with(['success' => 'Файл загруже']);
+    }
+
+    public function setImage(Request $request) {
+        $rules = [
+            'productID' => 'required',
+            'imageUrl' => 'required',
+        ];
+
+        $time = time();
+
+        $arr = explode('/', $request->imageUrl);
+        $name = $arr[count($arr) - 1];
+        $fileName = "images/uploads/{$request->productID}-$time-$name";
+        $file = public_path("$fileName");
+        $handle = fopen($file, 'w');
+
+        $client = new Client();
+        $client->request('GET', $request->imageUrl, [
+            'sink' => $handle,
+        ]);
+
+        $product = Product::find($request->productID);
+        $product->image = $fileName;
+        $product->save();
     }
 
 }
