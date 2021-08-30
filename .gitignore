@@ -1,6 +1,7 @@
 /node_modules
 /public/hot
 /public/storage
+!/storage/app/readme-assets/*
 /public/images/uploads/*
 !/public/images/uploads/.gitignore
 /storage/*.key
