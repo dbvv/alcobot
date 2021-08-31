@@ -68,6 +68,7 @@ class HomeController extends Controller
         $fileName = "images/uploads/{$request->productID}-$time-$name";
         $file = public_path("$fileName");
         $handle = fopen($file, 'w');
+        \Log::info($file);
 
         $client = new Client();
         $client->request('GET', $request->imageUrl, [

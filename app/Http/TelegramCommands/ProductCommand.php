@@ -38,7 +38,7 @@ class ProductCommand {
 
         $cartData = unserialize($cart['cart']->cart);
 
-        $caption = "Просмотр товара в категории: {$product->category->name} \n\n*{$product->name}* \n\n*Цена:* {$product->price} руб. ";
+        $caption = "Просмотр товара в категории: {$product->category->name} \n\n<b>{$product->name}</b> \n\n<b>Цена:</b> {$product->price} руб. ";
         $msg['parse_mode'] = 'markdown';
         $keyboard = [];
 
@@ -97,10 +97,14 @@ class ProductCommand {
         ]) ;
 
         if ($product->image) {
-            $msg['caption'] = $caption;
-            $photo = InputFile::create(public_path() . "/$product->image", $product->name);
-            $msg['photo'] = $photo;
-            $response = $this->telegram->sendPhoto($msg);
+            $image = asset($product->image);
+            $text = "$caption \n <a href='$image'>&#8205;</a>";
+            $msg['text'] = $text;
+            $msg['parse_mode'] = 'HTML';
+            //$msg['disable_web_page_preview'] = true;
+            //$photo = InputFile::create(public_path() . "/$product->image", $product->name);
+            //$msg['photo'] = $photo;
+            $response = $this->telegram->sendMessage($msg);
         } else {
             $msg['text'] = $caption;
             $reponse = $this->telegram->sendMessage($msg);
