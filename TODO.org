@@ -12,7 +12,7 @@
             - [X] При клике по картинке ткрывать попап с выдачей
             - [X] Загружать картинку
             - [X] Ставить картинку к товару
-    - [-] Административные [2/3]
+    - [X] Административные [3/3]
         - [X] Create redme
         - [X] Create console command
-        - [ ] Add clients section
+        - [X] Add clients section
