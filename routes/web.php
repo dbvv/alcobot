@@ -21,7 +21,7 @@ Route::get('/', function () {
 
 Route::group(['prefix' => 'tg'], function () {
     Route::get('set', [BotController::class, 'set'])->middleware('auth')->name('tg.set');
-    Route::get('webhook', [BotController::class, 'webhook'])->name('tg.webhook');
+    Route::post('webhook', [BotController::class, 'webhook'])->name('tg.webhook');
     Route::get('updates', [BotController::class, 'updates'])->name('tg.updates');
 });
 

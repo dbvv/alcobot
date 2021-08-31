@@ -17,6 +17,7 @@ class AdminSectionsServiceProvider extends ServiceProvider
         \App\Models\Product::class => 'App\Http\Sections\ProductSection',
         \App\Models\Page::class => 'App\Http\Sections\PagesSection',
         \App\Models\Order::class => 'App\Http\Sections\OrdersSection',
+        \App\Models\TelegramUsers::class => 'App\Http\Sections\TelegramUsersSection',
     ];
 
         /**

@@ -38,7 +38,9 @@ class BotController extends Controller
     }
 
     public function webhook(Request $request) {
-
+        Log::info("Webhook");
+        Log::info($request->all());
+        $this->handleUpdate($request->all());
     }
 
     public function updates(Request $request) {
@@ -47,6 +49,6 @@ class BotController extends Controller
         foreach ($updates as $update) {
             $this->handleUpdate($update);
         }
-        dump($updates);
+        //dump($updates);
     }
 }
