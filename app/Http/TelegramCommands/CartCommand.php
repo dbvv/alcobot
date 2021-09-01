@@ -35,9 +35,17 @@ class CartCommand {
         switch ($action) {
         case 'add_to_cart':
             Cart::addToCart($this->chatID, $product_id);
+            $this->telegram->sendMessage([
+                'chat_id' => $this->chatID,
+                'text' => 'Товар добавлен в корзину'
+            ]);
             break;
         case 'remove_from_cart':
             Cart::removeFromCart($this->chatID, $product_id);
+            $this->telegram->sendMessage([
+                'chat_id' => $this->chatID,
+                'text' => 'Товар удален из корзины'
+            ]);
             break;
         case 'cart_plus':
             Cart::increaseInCart($this->chatID, $product_id);
